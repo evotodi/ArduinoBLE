@@ -80,6 +80,7 @@ public:
   virtual uint16_t mtu(uint16_t handle) const;
 
   virtual bool disconnect();
+  virtual bool disconnect(int index);
 
   virtual BLEDevice central();
   virtual BLEDevice central(int index);

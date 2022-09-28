@@ -567,6 +567,40 @@ bool ATTClass::disconnect()
   return (numDisconnects > 0);
 }
 
+bool ATTClass::disconnect(int index)
+{
+  int numDisconnects = 0;
+  int currentIndex = 0;
+
+  for (int i = 0; i < ATT_MAX_PEERS; i++) {
+    if (_peers[i].connectionHandle == 0xffff) {
+      continue;
+    }
+
+    if (HCI.disconnect(_peers[i].connectionHandle) != 0) {
+      continue;
+    }
+
+    if (currentIndex == index) {
+      numDisconnects++;
+
+      _peers[i].connectionHandle = 0xffff;
+      _peers[i].role = 0x00;
+      _peers[i].addressType = 0x00;
+      memset(_peers[i].address, 0x00, sizeof(_peers[i].address));
+      memset(_peers[i].resolvedAddress, 0x00, sizeof(_peers[i].resolvedAddress));
+      _peers[i].mtu = 23;
+
+      if (_peers[i].device) {
+        delete _peers[i].device;
+      }
+      _peers[i].device = NULL;
+    }
+  }
+
+  return (numDisconnects > 0);
+}
+
 BLEDevice ATTClass::central()
 {
   for (int i = 0; i < ATT_MAX_PEERS; i++) {
@@ -585,13 +619,13 @@ BLEDevice ATTClass::central(int index)
   int currentIndex = 0;
   for (int i = 0; i < ATT_MAX_PEERS; i++) {
     if (_peers[i].connectionHandle == 0xffff || _peers[i].role != 0x01) {
-        continue;
+      continue;
     }
 
     if (currentIndex == index) {
-        return BLEDevice(_peers[i].addressType, _peers[i].address);
+      return BLEDevice(_peers[i].addressType, _peers[i].address);
     }
-      currentIndex++;
+    currentIndex++;
   }
 
   return BLEDevice();

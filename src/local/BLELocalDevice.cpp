@@ -232,6 +232,11 @@ bool BLELocalDevice::disconnect()
   return ATT.disconnect();
 }
 
+bool BLELocalDevice::disconnect(int index)
+{
+  return ATT.disconnect(index);
+}
+
 String BLELocalDevice::address() const
 {
   uint8_t addr[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };

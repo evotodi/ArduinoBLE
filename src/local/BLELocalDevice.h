@@ -43,6 +43,7 @@ public:
 
   virtual bool connected() const;
   virtual bool disconnect();
+  virtual bool disconnect(int index);
 
   virtual String address() const;
 
